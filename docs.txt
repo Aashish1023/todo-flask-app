@@ -1,0 +1,8 @@
+todo-flask-app/
+│── app.py
+│── requirements.txt
+│── static/
+│     └── style.css
+└── templates/
+      ├── base.html
+      └── index.html

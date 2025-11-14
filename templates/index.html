@@ -1,0 +1,19 @@
+<!-- Add Task Form -->
+ <form action="{{ url_for('add_task') }}" method="post" class="d-flex mb-3">
+     <input type="text" name="task" placeholder="Enter new task" class="form-control me-2" required>
+     <button type="submit">Add Task</button>
+</form>
+
+<!-- Task List -->
+ <ul class="list-group">
+     {% for task in tasks %}
+     <li class="list-group-item d-flex justify-content-between align-items-center">
+        <span>{{ task["task"] }}</span>
+
+        <div>
+            <a href="{{ url_for('edit_task', id=task['id']) }}" class="btn btn-sm btn-outline-secondary me-1">Edit</a>
+            <form action="{{ url_for'delete_task', id=task['id'] }}" method="POST" style="display:inline;">
+                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+            </form>
+        </div>
+     </li>
