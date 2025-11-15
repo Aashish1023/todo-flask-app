@@ -19,3 +19,12 @@ def init_db():
     """)
     conn.commit()
     conn.close()
+
+ # Initialize the database when the app starts
+init_db()
+
+# Helper function to get database connection
+def get_db_connection():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row 
+    return conn
