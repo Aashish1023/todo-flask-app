@@ -47,3 +47,12 @@ def add_task():
         conn.commit()
         conn.close()
     return redirect(url_for("index"))
+
+# Route to delete a task
+@app.route("/delete/<int:task_id>", methods=["POST"])
+def delete_task(task_id):
+    conn = get_db_connection()
+    conn.execute("DELETE FROM tasks WHERE id = ?", (task_id,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for("index"))
