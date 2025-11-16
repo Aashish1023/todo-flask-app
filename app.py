@@ -8,14 +8,14 @@ DB_PATH = 'task.db'
 
 # Initialize the database setup
 def init_db():
-    
-    conn = sqlite3.connect(DB_PATH)
-    cur = conn.cursor
+
+    conn = sqlite3.connect("task.db")
+    cur = conn.cursor()
     cur.execute("""
         CREATE TABLE IF NOT EXISTS tasks(
-                id INTEGET PRIMARY KEY AUTOINCREMENT,
-                title TEXT NOT NULL,
-            )            
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT NOT NULL
+        )            
     """)
     conn.commit()
     conn.close()
@@ -25,7 +25,7 @@ init_db()
 
 # Helper function to get database connection
 def get_db_connection():
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect("task.db")
     conn.row_factory = sqlite3.Row 
     return conn
 
