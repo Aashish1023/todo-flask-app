@@ -56,3 +56,10 @@ def delete_task(task_id):
     conn.commit()
     conn.close()
     return redirect(url_for("index"))
+
+# --Edit / Update need to add later--
+
+if __name__ == "__main__":
+    if not os.path.exists(DB_PATH):
+        init_db() 
+    app.run(debug=True)
