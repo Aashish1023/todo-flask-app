@@ -57,7 +57,28 @@ def delete_task(task_id):
     conn.close()
     return redirect(url_for("index"))
 
-# --Edit / Update need to add later--
+# --Edit / Update -
+@app.route("/edit/<int:id>", methods=["POST", "GET"])
+def edit_task(id):
+    conn = get_db_connection()
+    tasks = conn.execute("SELECT * FROM tasks WHERE id = ?", (id,)).fetchone()
+    conn.close()
+
+    if tasks is None:
+        return "Task not Found", 404
+    return render_template("edit.html", task=tasks)
+
+@app.route("/update/<int:id>", methods=["POST"])
+def update_task(id):
+    new_title = request.form["task"]
+    
+    conn = get_db_connection()
+    conn.execute("UPDATE tasks SET title = ? WHERE id = ?", (new_title, id))
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for("index"))
+
 
 if __name__ == "__main__":
     if not os.path.exists(DB_PATH):
