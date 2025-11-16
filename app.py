@@ -28,3 +28,22 @@ def get_db_connection():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row 
     return conn
+
+# Route to display all tasks
+@app.route("/")
+def index():
+    conn = get_db_connection()
+    tasks = conn.execute("SELECT * FROM tasks ORDER BY id DESC").fetchall()
+    conn.close()
+    return render_template("index.html", tasks=tasks)
+
+# Route to add a new task
+@app.route("/add", methods=["POST"])
+def add_task():
+    task_title = request.form.get("task", "").strip()
+    if task_title:
+        conn = get_db_connection()
+        conn.execute("INSERT INTO tasks (title) VALUES (?)", (task_title,))
+        conn.commit()
+        conn.close()
+    return redirect(url_for("index"))
