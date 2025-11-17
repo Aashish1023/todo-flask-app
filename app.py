@@ -79,16 +79,30 @@ def update_task(id):
 
     return redirect(url_for("index"))
 
-@app.route("toggle/<int:task_id>", methods=["POST"])
+@app.route("/toggle/<int:task_id>", methods=["POST"])
 def toggle_task(task_id):
     conn = get_db_connection()
 
-    task = conn.execute("SELECT completed FROM task WHERE id = ?", (task_id,)).fetchone()
+     # Check if column exists
+    cursor = conn.execute("PRAGMA table_info(tasks)")
+    columns = [col[1] for col in cursor]
+
+    if "completed" not in columns:
+        conn.execute("ALTER TABLE tasks ADD COLUMN completed INTEGER DEFAULT 0")
+
+    #Fetch task row
+    task = conn.execute("SELECT completed FROM tasks WHERE id = ?", (task_id,)).fetchone()
+   
+    if task is None:
+        conn.close()
+        return "Task not found", 404
+    
     new_status = 0 if task["completed"] == 1 else 1
 
     conn.execute("UPDATE tasks SET completed = ? WHERE id = ?", (new_status, task_id))
     conn.commit()
     conn.close()
+
     return redirect(url_for("index"))
 
 
