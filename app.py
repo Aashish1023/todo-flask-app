@@ -79,6 +79,18 @@ def update_task(id):
 
     return redirect(url_for("index"))
 
+@app.route("toggle/<int:task_id>", methods=["POST"])
+def toggle_task(task_id):
+    conn = get_db_connection()
+
+    task = conn.execute("SELECT completed FROM task WHERE id = ?", (task_id,)).fetchone()
+    new_status = 0 if task["completed"] == 1 else 1
+
+    conn.execute("UPDATE tasks SET completed = ? WHERE id = ?", (new_status, task_id))
+    conn.commit()
+    conn.close()
+    return redirect(url_for("index"))
+
 
 if __name__ == "__main__":
     if not os.path.exists(DB_PATH):
