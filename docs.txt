@@ -1,6 +1,8 @@
 todo-flask-app/
 │── app.py
+│── upgrade_db.py
 │── requirements.txt
+│── task.db
 │── static/
 │     └── style.css
 └── templates/
