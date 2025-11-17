@@ -8,6 +8,7 @@ todo-flask-app/
       └── index.html
       └── edit.html
 
+#------------------------------
 Mark Task as Completed (Checkbox)
 
 This feature will allow users to check/uncheck a task as completed.
