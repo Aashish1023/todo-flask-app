@@ -1,6 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for
 import sqlite3
 import os
+form apscheduler.schedulers.background import BackgroundScheduler
+from datetime import datetime, timedelta
+form dotenv import load_dotenv
+load_dotenv() # Load environment variables from .env file
 
 app = Flask(__name__)
 
@@ -28,6 +32,21 @@ def get_db_connection():
     conn = sqlite3.connect("task.db")
     conn.row_factory = sqlite3.Row 
     return conn
+
+#Helper: parse ISO date/datetime string
+def parse_date(s):
+    #ecpects 'YYYY-MM-DD' or 'YYYY-MM-DDTHH:MM:SS'
+    try:
+        return datetime.strptime(s, "%y-%m-%d").date()
+    except Exception:
+        return None
+
+def parse_datetime(s):
+    # expects 'YYYY-MM-DD HH:MM' or None
+    try:
+        return datetime.strptime(s, "%Y-%m-%d %H:%M")
+    except Exception:
+        return None
 
 # Route to display all tasks
 @app.route("/")
