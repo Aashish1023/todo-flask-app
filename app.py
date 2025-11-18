@@ -94,10 +94,15 @@ def edit_task(id):
 
 @app.route("/update/<int:id>", methods=["POST"])
 def update_task(id):
-    new_title = request.form["task"]
+    new_title = request.form.get("task", "").strip()
+    due_date = request.from.get("due_date") or None)   # e.g., "2025-11-12"
+    reminder_at = request.from.get("reminder_at") or None # e.g., "2025-11-12 14:30"
+   
     
     conn = get_db_connection()
-    conn.execute("UPDATE tasks SET title = ? WHERE id = ?", (new_title, id))
+    conn.execute("UPDATE tasks SET title = ?, due_date = ?, reminder_at = ?, reminder_sent = 0 WHERE id = ?",
+                  (new_title, due_date, reminder_at, id)
+                )
     conn.commit()
     conn.close()
 
