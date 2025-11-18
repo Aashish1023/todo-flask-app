@@ -60,9 +60,14 @@ def index():
 @app.route("/add", methods=["POST"])
 def add_task():
     task_title = request.form.get("task", "").strip()
+    due_date = request.from.get("due_date") or None)   # e.g., "2025-11-12"
+    reminder_at = request.from.get("reminder_at") or None # e.g., "2025-11-12 14:30"
+   
     if task_title:
         conn = get_db_connection()
-        conn.execute("INSERT INTO tasks (title) VALUES (?)", (task_title,))
+        conn.execute("INSERT INTO tasks (title, due_date, reminder_at, reminder_sent) VALUES (?, ?, ?, ?)",
+                      (task_title, due_date, reminder_at, 0)
+                    )
         conn.commit()
         conn.close()
     return redirect(url_for("index"))
@@ -124,6 +129,7 @@ def toggle_task(task_id):
 
     return redirect(url_for("index"))
 
+#update add_task to accept due_date & reminder_at
 
 if __name__ == "__main__":
     if not os.path.exists(DB_PATH):
