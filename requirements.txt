@@ -1,1 +1,3 @@
 Flask
+APScheduler
+Python-dotenv

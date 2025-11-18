@@ -19,3 +19,19 @@ It requires changes in:
 ✔ 1. Database
 ✔ 2. app.py routes
 ✔ 3. HTML templates (index.html)
+
+#------------
+🔜 Next Feature: Add Due Dates + Reminders
+Plan (high level)
+
+Add DB columns: due_date (date string), reminder_at (datetime string) and reminder_sent (0/1).
+
+Update add/edit forms to accept due date and optional reminder datetime.
+
+Show due date and reminder status in index.html and style overdue tasks.
+
+Add backend handling (insert / update / display).
+
+Add a background job (APScheduler) that periodically checks for pending reminders and either emails the user or logs the reminder; mark reminders as sent to avoid duplicates.
+
+Explain the important code and how to configure email safely.
