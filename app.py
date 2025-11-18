@@ -1,9 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for
 import sqlite3
 import os
-form apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime, timedelta
-form dotenv import load_dotenv
+from dotenv import load_dotenv
+
 load_dotenv() # Load environment variables from .env file
 
 app = Flask(__name__)
@@ -60,8 +61,8 @@ def index():
 @app.route("/add", methods=["POST"])
 def add_task():
     task_title = request.form.get("task", "").strip()
-    due_date = request.from.get("due_date") or None)   # e.g., "2025-11-12"
-    reminder_at = request.from.get("reminder_at") or None # e.g., "2025-11-12 14:30"
+    due_date = request.form.get("due_date") or None   # e.g., "2025-11-12"
+    reminder_at = request.form.get("reminder_at") or None # e.g., "2025-11-12 14:30"
    
     if task_title:
         conn = get_db_connection()
@@ -95,8 +96,8 @@ def edit_task(id):
 @app.route("/update/<int:id>", methods=["POST"])
 def update_task(id):
     new_title = request.form.get("task", "").strip()
-    due_date = request.from.get("due_date") or None)   # e.g., "2025-11-12"
-    reminder_at = request.from.get("reminder_at") or None # e.g., "2025-11-12 14:30"
+    due_date = request.form.get("due_date") or None  # e.g., "2025-11-12"
+    reminder_at = request.form.get("reminder_at") or None # e.g., "2025-11-12 14:30"
    
     
     conn = get_db_connection()
