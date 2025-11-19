@@ -14,7 +14,16 @@
         <input type="date" name="due_date" value="{{ task['due_date'] or ''}}" class="form-control">
     </div>
 
-    <button class="btn btn-success me-2" type="submit">Update Task</button>
+    <div class="mb-3">
+        <label class="form-label">Reminder (date & time)</label>
+        <!-- Use datetime-local so browser provides a time picker; must convert format -->
+        <input type="datetime-local" name="reminder_at" 
+               value="{% if task['reminder_at'] %}{{ task['reminder_at']|replace(' ', 'T') }}{% endif %}"
+               class="form-control">
+        <small class="text-muted">Format: YYYY-MM-DD HH:MM (browser converts)</small>
+    </div>
+
+    <button class="btn btn-success" type="submit">Update Task</button>
     <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancel</a>
 </form>
 
