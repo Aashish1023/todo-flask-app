@@ -161,6 +161,40 @@ def send_reminder_email(to_email, subject, body):
     s.sendmail(FROM, [to_email], msg.as_string())
     s.quit()
 
+    #job function to check pending reminders
+
+def check_and_send_reminders():
+    conn = get_db_connection()
+    # get tasks that have a reminder_at, reminder_sent = 0 and reminder_at <= now
+    rows = conn.execute(
+        "SELECT id, title, reminder_at FROM tasks WHERE reminder_at IS NOT NULL AND reminder_sent = 0"
+    ).fetchall()
+
+    now = datetime.now()
+    for r in rows:
+        ra = r["reminder_at"]
+        dt = parse_datetime(ra)
+        if dt and dt <= now:
+            # Send reminder (or print)
+            # Use REMINDER_TO from env or fallback to print
+            to_addr = os.getenv("REMINDER_TO")
+            subject = f"Reminder: {r['title']}"
+            body = f"Reminder for task '{r['title']}' scheduled at {r['reminder_at']}."
+
+            if to_addr:
+                try:
+                    send_reminder_email(to_addr, subject, body)
+                except Exception as e:
+                    print("Failed to send email:", e)
+                    continue
+            else:
+                print("Reminder triggered:", r['id'], r['title'], r['reminder_at'])
+
+            # Mark as sent
+            conn.execute("UPDATE tasks SET reminder_sent = 1 WHERE id = ?", (r["id"],))
+            conn.commit()
+    conn.close()
+
 
 if __name__ == "__main__":
     if not os.path.exists(DB_PATH):
