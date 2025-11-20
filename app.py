@@ -4,6 +4,8 @@ import os
 from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
+import smtplib
+from email.mime.text import MIMEText
 
 load_dotenv() # Load environment variables from .env file
 
@@ -136,6 +138,29 @@ def toggle_task(task_id):
     return redirect(url_for("index"))
 
 #update add_task to accept due_date & reminder_at
+def send_reminder_email(to_email, subject, body):
+    #Uses SMTP Seettings from environment variables
+    SMTP_HOST = os.getenv("SMTP_HOST")
+    SMTP_PORT = int(os.getenv("SMTP_PORT", 587))
+    SMTP_USER = os.getenv("SMTP_USER")
+    SMTP_PASS = os.getenv("SMTP_PASS")
+    FROM = os.getenv("FROM_EMAIL")
+
+    if not SMTP_HOST or not SMTP_USER or not SMTP_PASS or not FROM:
+         # fallback: print the message (safe for dev)
+        print("Reminder (mock);" , to_email, subject, body)
+        return
+    msg = MIMEText(body)
+    msg['Subject'] = subject
+    msg['From'] = FROM
+    msg['To'] = to_email
+
+    s = smtplib.SMTP(SMTP_HOST, SMTP_PORT)
+    s.starttls()
+    s.login(SMTP_USER, SMTP_PASS)
+    s.sendmail(FROM, [to_email], msg.as_string())
+    s.quit()
+
 
 if __name__ == "__main__":
     if not os.path.exists(DB_PATH):
