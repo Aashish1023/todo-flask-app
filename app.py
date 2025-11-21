@@ -196,7 +196,13 @@ def check_and_send_reminders():
     conn.close()
 
 
+# Schedule the reminder checker
+scheduler = BackgroundScheduler(daemon=True)
+# check every minute (can adjust as needed)
+scheduler.add_job(check_and_send_reminders, 'interval', minutes=1)
+scheduler.start()
+
 if __name__ == "__main__":
     if not os.path.exists(DB_PATH):
         init_db() 
-    app.run(debug=True)
+    app.run(debug=True, use_reloader=False)
