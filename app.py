@@ -57,6 +57,21 @@ def index():
     conn = get_db_connection()
     tasks = conn.execute("SELECT * FROM tasks ORDER BY id DESC").fetchall()
     conn.close()
+
+    now = datetime.now()
+    tasks = []
+    for r in rows:
+        due = None
+        if r["due_date"]:
+            try:
+                due = datetime.strptime(r["due_date"], "%Y-%m-%d").date()
+            except:
+                due = None
+        overdue = (due is not None and due < now and r["completed"] == 0)
+        tasks.append({
+            **dict(r),
+            "overdue": overdue
+        })
     return render_template("index.html", tasks=tasks)
 
 # Route to add a new task
