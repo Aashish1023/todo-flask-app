@@ -55,7 +55,7 @@ def parse_datetime(s):
 @app.route("/")
 def index():
     conn = get_db_connection()
-    tasks = conn.execute("SELECT * FROM tasks ORDER BY id DESC").fetchall()
+    rows = conn.execute("SELECT * FROM tasks ORDER BY id DESC").fetchall()
     conn.close()
 
     now = datetime.now()
