@@ -20,21 +20,21 @@
             <!-- Task Title -->
             <div>
                 <div>
-                    <span class="{% if task['completed'] == 1 %} text-decoration-line-through text-muted {% endif %}">
+                    <span class="{% if task['overdue'] %}overdue{% endif %}">
                         {{ task['title'] }}
                     </span>
                 </div>
 
-                <small>
-                    {% if task['due_date'] %}
+                <small class="text-muted ms-2">
+                    <!-- {% if task['due_date'] %} -->
                         Due: {{ task['due_date'] }}
-                    {% endif %}
+                    <!-- {% endif %}
                     {% if task['reminder_at'] %}
                         *Reminder: {{ task['reminder_at'] }}
                         {% if task['reminder_sent'] == 1 %}
                             <span class="badge bg-success ms-1">Sent</span>
                         {% endif %}
-                    {% endif %}
+                    {% endif %} --> 
                 </small>
             </div>
         </div>  
