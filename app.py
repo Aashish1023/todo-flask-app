@@ -38,10 +38,12 @@ def get_db_connection():
 
 #Helper: parse ISO date/datetime string
 def parse_date(s):
-    #ecpects 'YYYY-MM-DD' or 'YYYY-MM-DDTHH:MM:SS'
+    # expects 'YYYY-MM-DD'
+    if not s:
+        return None
     try:
-        return datetime.strptime(s, "%y-%m-%d").date()
-    except Exception:
+        return datetime.strptime(s, "%Y-%m-%d").date()
+    except ValueError:
         return None
 
 def parse_datetime(s):
@@ -58,16 +60,19 @@ def index():
     rows = conn.execute("SELECT * FROM tasks ORDER BY id DESC").fetchall()
     conn.close()
 
-    now = datetime.now()
+    now = datetime.now().date()
+
     tasks = []
     for r in rows:
         due = None
         if r["due_date"]:
             try:
                 due = datetime.strptime(r["due_date"], "%Y-%m-%d").date()
-            except:
+            except ValueError:
                 due = None
-        overdue = (due is not None and due < now and r["completed"] == 0)
+        # normalize completed (default 0)
+        completed = int(r["completed"]) if ("completed" in r.keys() and r["completed"] is not None) else 0
+        overdue = (due is not None and due < now and completed == 0)
         tasks.append({
             **dict(r),
             "overdue": overdue
