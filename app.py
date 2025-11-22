@@ -56,28 +56,36 @@ def parse_datetime(s):
 # Route to display all tasks
 @app.route("/")
 def index():
+    sort = request.args.get("sort", "id_desc")
+    filter_by = request.args.get("filter", "all")
+
     conn = get_db_connection()
-    rows = conn.execute("SELECT * FROM tasks ORDER BY id DESC").fetchall()
+
+    query = "SELECT * FROM tasks"
+    params = []
+
+    # --- Filtering ---
+    if filter_by == "completed":
+        query += " WHERE completed = 1"
+    elif filter_by == "pending":
+        query += " WHERE completed = 0"
+    elif filter_by == "overdue":
+        query += " WHERE due_date IS NOT NULL AND due_date < ? AND completed = 0"
+    
+    # --- Sorting ---
+    if sort == "id-asc":
+        query += " ORDER BY due_date ASC"
+    elif sort == "id-desc":
+        query += " ORDER BY id DESC"
+    elif sort == "due-asc":
+        query += " ORDER BY due_date ASC"
+    elif sort == "due-desc":
+        query += " ORDER BY due_date ASC"
+
+    tasks_raw = conn.execute(query, params).fetchall()
     conn.close()
 
-    now = datetime.now().date()
-
-    tasks = []
-    for r in rows:
-        due = None
-        if r["due_date"]:
-            try:
-                due = datetime.strptime(r["due_date"], "%Y-%m-%d").date()
-            except ValueError:
-                due = None
-        # normalize completed (default 0)
-        completed = int(r["completed"]) if ("completed" in r.keys() and r["completed"] is not None) else 0
-        overdue = (due is not None and due < now and completed == 0)
-        tasks.append({
-            **dict(r),
-            "overdue": overdue
-        })
-    return render_template("index.html", tasks=tasks)
+    return render_template("index.html", tasks=tasks_raw, sort=sort, filter_by=filter_by )
 
 # Route to add a new task
 @app.route("/add", methods=["POST"])
