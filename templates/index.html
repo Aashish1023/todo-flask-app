@@ -39,7 +39,7 @@
             <!-- Task Title -->
             <div>
                 <div>
-                    <span class="{% if task['overdue'] %}overdue{% endif %}">
+                    <span class="{% if task['due_date'] and task['due_date'] < current_date %}text-danger{% endif %}">
                         {{ task['title'] }}
                     </span>
                 </div>
