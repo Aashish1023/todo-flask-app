@@ -2,7 +2,8 @@ from flask import Flask, render_template, request, redirect, url_for
 import sqlite3
 import os
 from apscheduler.schedulers.background import BackgroundScheduler
-from datetime import datetime, timedelta
+from datetime import datetime, date
+from datetime import date
 from dotenv import load_dotenv
 import smtplib
 from email.mime.text import MIMEText
@@ -82,10 +83,36 @@ def index():
     elif sort == "due-desc":
         query += " ORDER BY due_date ASC"
 
-    tasks_raw = conn.execute(query, params).fetchall()
+    row = conn.execute(query).fetchall()
     conn.close()
 
-    return render_template("index.html", tasks=tasks_raw, sort=sort, filter_by=filter_by )
+    tasks = []
+    for r in row:
+        due = r["due_date"]
+
+        # Convert string → date object
+        if due:
+            try:
+                due_date_obj = datetime.strptime(due, "%Y-%m-%d").date()
+            except:
+                due_date_obj = None
+        else:
+            due_date_obj = None
+
+        tasks.append({
+            "id": r["id"],
+            "title": r["title"],
+            "completed": r["completed"],
+            "due_date": due_date_obj
+        })
+
+    return render_template(
+    "index.html",
+    tasks=tasks,
+    sort=sort,
+    filter_by=filter_by,
+    current_date=date.today()   
+    )
 
 # Route to add a new task
 @app.route("/add", methods=["POST"])
