@@ -18,11 +18,11 @@
             <option value="due_desc" {% if sort=='due_desc' %}selected{% endif %}>Due Date⬇️</option>
         </select>
 
-        <select name="" id="">
-            <option value="">All Tasks</option>
-            <option value="">Completed</option>
-            <option value="">Pending</option>
-            <option value="">overdue</option>
+        <select name="filter" class="form-select" onchange="this.form.submit()">
+            <option value="all" {% if fliter_by=='all' %}selected{% endif %}>All Tasks</option>
+            <option value="completed" {% if fliter_by=='completed' %}selected{% endif %}>Completed</option>
+            <option value="pending" {% if fliter_by=='pending' %}selected{% endif %}>Pending</option>
+            <option value="overdue" {% if fliter_by=='overdue' %}selected{% endif %}>Overdue</option>
         </select>
     </form>
 </div>
