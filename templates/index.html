@@ -12,7 +12,11 @@
     <!-- Sorting -->    
     <form method="get" class="d-flex">
         <select name="sort" class="form-select me-2" onchange="this.form.submit()">
-            <option value="id_desc" {% if sort=='id_desc' %}selected{% endif %} >Newest First</option>
+            <option value="id_desc" {% if sort=='id_desc' %}selected{% endif %} >
+                <a href="{{ url_for('index', sort='id-desc', filter=fliter_by, search=search) }}">
+                    Newest First
+                </a>
+            </option>
             <option value="id_asc" {% if sort=='id_asc' %}selected{% endif %}>Oldest First</option>
             <option value="due_asc" {% if sort=='due_asc' %}selected{% endif %}>Due Date⬆️</option>
             <option value="due_desc" {% if sort=='due_desc' %}selected{% endif %}>Due Date⬇️</option>
