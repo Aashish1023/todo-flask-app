@@ -5,7 +5,7 @@
 <!-- Add Task Form -->
  <form action="{{ url_for('add_task') }}" method="post" class="d-flex mb-3">
      <input type="text" name="task" placeholder="Enter new task" class="form-control me-2" required>
-     <button type="submit">Add Task</button>
+     <button type="submit" class=" btn btn-success">Add Task</button>
 </form>
 
 <div class="d-flex justify-content-between mb-3">
@@ -26,6 +26,11 @@
         </select>
     </form>
 </div>
+
+<form method="GET" action="{{ url_for('index') }}" class="d-flex mb-3">
+    <input type="text" name="search" class="form-control me-2" placeholder="Search tasks..." value="{{ request.args.get('search', '') }}">
+    <button class="btn btn-primary ms-2">Search</button>
+</form>
 
 <!-- Task List -->
  <ul class="list-group">
