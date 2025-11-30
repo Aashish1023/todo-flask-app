@@ -62,16 +62,23 @@ def index():
 
     conn = get_db_connection()
 
-    query = "SELECT * FROM tasks"
+    search = request.args.get("search", "").strip()
+
+    query = "SELECT * FROM tasks WHERE 1=1"
     params = []
+
+    # --- Searching ---
+    if search:
+        query += " AND title LIKE ?"
+        params.append(f"%{search}%")
 
     # --- Filtering ---
     if filter_by == "completed":
-        query += " WHERE completed = 1"
+        query += " AND completed = 1"
     elif filter_by == "pending":
-        query += " WHERE completed = 0"
+        query += " AND completed = 0"
     elif filter_by == "overdue":
-        query += " WHERE due_date IS NOT NULL AND due_date < ? AND completed = 0"
+        query += " AND due_date IS NOT NULL AND due_date < DATE('now') AND completed = 0"
     
     # --- Sorting ---
     if sort == "id-asc":
