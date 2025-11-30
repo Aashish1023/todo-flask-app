@@ -118,7 +118,8 @@ def index():
     tasks=tasks,
     sort=sort,
     filter_by=filter_by,
-    current_date=date.today()   
+    current_date=date.today(),
+    search=search
     )
 
 # Route to add a new task
