@@ -90,7 +90,7 @@ def index():
     elif sort == "due-desc":
         query += " ORDER BY due_date ASC"
 
-    row = conn.execute(query).fetchall()
+    row = conn.execute(query, params).fetchall()
     conn.close()
 
     tasks = []
