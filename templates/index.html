@@ -2,11 +2,7 @@
 
 {% block content %}
 <h2 class="text-center mb-4">To-Do List</h2>
-<!--Search Bar-->
-<form method="GET" action="{{ url_for('index') }}" class="d-flex mb-3">
-    <input type="text" name="search" class="form-control me-2" placeholder="Search tasks..." value="{{ request.args.get('search', '') }}">
-    <button class="btn btn-primary ms-2">Search</button>
-</form>
+
 
 <!-- Add Task Form -->
  <form action="{{ url_for('add_task') }}" method="post" class="d-flex mb-3">
@@ -15,82 +11,98 @@
 </form>
 
 
-<div class="d-flex justify-content-between mb-3">
-    <!-- Sorting -->    
-    <form method="get" class="d-flex">
-        <select name="sort" class="form-select me-2" onchange="this.form.submit()">
-            <option value="id_desc" {% if sort=='id_desc' %}selected{% endif %} >
-                <a href="{{ url_for('index', sort='id-desc', filter=fliter_by, search=search) }}">
-                    Newest First
-                </a>
-            </option>
-            <option value="id_asc" {% if sort=='id_asc' %}selected{% endif %}>Oldest First</option>
-            <option value="due_asc" {% if sort=='due_asc' %}selected{% endif %}>Due Date⬆️</option>
-            <option value="due_desc" {% if sort=='due_desc' %}selected{% endif %}>Due Date⬇️</option>
-        </select>
-
-        
-        <select name="filter" class="form-select" onchange="this.form.submit()">
-            <option value="all" {% if fliter_by=='all' %}selected{% endif %}>All Tasks</option>
-            <option value="completed" {% if fliter_by=='completed' %}selected{% endif %}>Completed</option>
-            <option value="pending" {% if fliter_by=='pending' %}selected{% endif %}>Pending</option>
-            <option value="overdue" {% if fliter_by=='overdue' %}selected{% endif %}>Overdue</option>
-        </select>
-    </form>
-</div>
-
 <!-- Improve UI -->
 <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
+     <!--Search Bar-->
+    <form method="GET" action="{{ url_for('index') }}" class="d-flex">
+        <input type="text" name="search" class="form-control me-2" placeholder="Search tasks..." value="{{ request.args.get('search', '') }}">
+        <button class="btn btn-primary ms-2">Search</button>
+    </form>
 
+    <!-- Filter -->
+    <div class="ms-3">
+        <a class="btn btn-outline-secondary {% if fliter_by == 'all' %}active{% endif %}>"
+            href="{{ url_for('index', sort=sort, filter='all', search=search) }}">All</a>
+        
+        <a class="btn btn-outline-secondary {% if fliter_by == 'completed' %}active{% endif %}>"
+            href="{{ url_for('index', sort=sort, filter='completed', search=search) }}">Completed</a>
+        
+        <a class="btn btn-outline-secondary {% if fliter_by == 'pending' %}active{% endif %}>"
+            href="{{ url_for('index', sort=sort, filter='pending', search=search) }}">Pending</a>
+        
+        <a class="btn btn-outline-secondary {% if fliter_by == 'overdue' %}active{% endif %}>"
+            href="{{ url_for('index', sort=sort, filter='overdue', search=search) }}">Overdue</a>
+    </div>
+
+    <!-- Sort -->
+    <div>   
+        <a class="btn btn-outline-dark {% if sort == 'id_desc' %}active{% endif %}"
+            href="{{ url_for('index', sort='id-desc', filter=fliter_by, search=search) }}">Newest</a>
+        
+        <a class="btn btn-outline-dark {% if sort == 'id_asc' %}active{% endif %}"
+            href="{{ url_for('index', sort='id_asc', filter=fliter_by, search=search) }}">Oldest</a>
+        
+        <a class="btn btn-outline-dark {% if sort == 'due_asc' %}active{% endif %}"
+            href="{{ url_for('index', sort='due_asc', filter=fliter_by, search=search) }}">Due ↑</a>
+        
+        <a class="btn btn-outline-dark {% if sort == 'due_desc' %}active{% endif %}"
+            href="{{ url_for('index', sort='due_desc', filter=fliter_by, search=search) }}">Due ↓</a>
+        
+    </div>
 </div>
 
 
 <!-- Task List -->
- <ul class="list-group">
+ <div class="row">
     {% for task in tasks %}
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-        <div class="d-flex align-items-center gap-2" style="flex:1">
-            <form action="{{ url_for('toggle_task', task_id=task['id']) }}" method="POST" >
-                <input type="checkbox" onchange="this.form.submit()" {% if task['completed'] == 1 %} checked {% endif %}>
-            </form>
-            
-            <!-- Task Title -->
-            <div>
-                <div>
-                    <span class="{% if task['due_date'] and task['due_date'] < current_date %}text-danger{% endif %}">
-                        {{ task['title'] }}
-                    </span>
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+
+                <!-- Task Title -->
+                <h5 class="card-title
+                    {%if task['due_date'] and task['due_date'] < current_date %}
+                        text-danger
+                    {% endif %}
+                 ">
+                    {{ task['title'] }}
+                </h5>
+
+                <!-- Status Badge -->
+                {% if task['completed'] %}
+                    <span class="badge bg-success">Completed</span>
+                {% else %}
+                    <span class="badge bg-warning text-dark">Pending</span>
+                {% endif %}
+
+                <!-- Due Date -->
+                <p class="mt-2 mb-2 text-muted">
+                    {% if task['due_date'] %}
+                        Due: {{ task['due_date'].strftime('%Y-%m-%d') }}
+                    {% else %}
+                        No due date
+                    {% endif %}
+                </p> 
+
+                <!--Button-->
+                <div class="d-flex justify-content-between mt-3">
+
+                    <a href="/toogle/{{ task['id'] }}" class="btn btn-sm btn-outline-primary">
+                        {% if task['completed'] %}Unmark{% else %}Mark as Completed{% endif %}
+                    </a>
+                    <a href="/delete/{{ task['id'] }}"
+                        onclick="return confirm('Delete this task?');" 
+                        class="btn btn-sm btn-outline-danger">
+                        Delete
+                    </a>
 
                 </div>
-
-                <small class="text-muted ms-2">
-                    <!-- {% if task['due_date'] %} -->
-                        Due: {{ task['due_date'] }}
-                    <!-- {% endif %}
-                    {% if task['reminder_at'] %}
-                        *Reminder: {{ task['reminder_at'] }}
-                        {% if task['reminder_sent'] == 1 %}
-                            <span class="badge bg-success ms-1">Sent</span>
-                        {% endif %}
-                    {% endif %} --> 
-                </small>
-            </div>
-        </div>  
-
-        <div>
-            <!--Edit Button-->
-            <a href="{{ url_for('edit_task', id=task['id']) }}" class="btn btn-warning btn-sm">Edit</a>
-
-            <!--Delete Button-->>           
-            <form action="{{ url_for('delete_task', task_id=task['id']) }}" method="POST" style="display:inline;">
-                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-            </form>
-        </div>
-           
-    </li>
+            </div>         
+        </div>        
+    </div>
     {% else %}
     <li class="list-group-item">No tasks available. Add your First Task</li>
     {% endfor %}
- </ul>    
+ </div>    
 
 {% endblock %}
