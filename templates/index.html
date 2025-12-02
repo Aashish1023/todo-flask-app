@@ -2,11 +2,18 @@
 
 {% block content %}
 <h2 class="text-center mb-4">To-Do List</h2>
+<!--Search Bar-->
+<form method="GET" action="{{ url_for('index') }}" class="d-flex mb-3">
+    <input type="text" name="search" class="form-control me-2" placeholder="Search tasks..." value="{{ request.args.get('search', '') }}">
+    <button class="btn btn-primary ms-2">Search</button>
+</form>
+
 <!-- Add Task Form -->
  <form action="{{ url_for('add_task') }}" method="post" class="d-flex mb-3">
      <input type="text" name="task" placeholder="Enter new task" class="form-control me-2" required>
      <button type="submit" class=" btn btn-success">Add Task</button>
 </form>
+
 
 <div class="d-flex justify-content-between mb-3">
     <!-- Sorting -->    
@@ -22,6 +29,7 @@
             <option value="due_desc" {% if sort=='due_desc' %}selected{% endif %}>Due Date⬇️</option>
         </select>
 
+        
         <select name="filter" class="form-select" onchange="this.form.submit()">
             <option value="all" {% if fliter_by=='all' %}selected{% endif %}>All Tasks</option>
             <option value="completed" {% if fliter_by=='completed' %}selected{% endif %}>Completed</option>
@@ -31,10 +39,11 @@
     </form>
 </div>
 
-<form method="GET" action="{{ url_for('index') }}" class="d-flex mb-3">
-    <input type="text" name="search" class="form-control me-2" placeholder="Search tasks..." value="{{ request.args.get('search', '') }}">
-    <button class="btn btn-primary ms-2">Search</button>
-</form>
+<!-- Improve UI -->
+<div class="d-flex flex-wrap gap-2 align-items-center mb-3">
+
+</div>
+
 
 <!-- Task List -->
  <ul class="list-group">
